@@ -10,20 +10,23 @@ function App() {
 
   useEffect(() => {
     api.get('/repositories').then((response) => {
-      console.log(response)
       setRepositories(response.data);
     })
   }, [repositories])
 
   async function handleAddRepository() {
-    // TODO
+    const response = await api.post('/repositories', {
+      title: "Axios",
+      url: "https://github.com/axios/axios",
+      techs: ["Node.js"]
+    })
+
+    setRepositories([...repositories, response.data]);
   }
 
   async function handleRemoveRepository(id) {
-    api.delete(`/repositories/${id}`).then(() => {
-      const index = repositories.findIndex(repo => repo.id === id);
-      repositories.splice(index, 1);
-    })
+    await api.delete(`/repositories/${id}`);
+    setRepositories(repositories.filter(repo => { return repo.id !== id }))
   }
 
   return (
